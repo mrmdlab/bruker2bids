@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>bruker2bids</title>
+  <link rel="icon" href="https://api.iconify.design/mingcute:transformation-fill.svg">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.1.6/dist/vuetify.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/vue-router@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.1.6/dist/vuetify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.3.4/dist/axios.min.js"></script>
+
+  <v-app id="app">
+    <v-container>
+      <h1 class="text-center">bruker2bids</h1>
+      <h4>data directory: {{store.data_directory}}</h4>
+      <div class="d-flex justify-space-between">
+        <span>{{prompt}}</span>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" size="small" @click="back">back</v-btn>
+        <v-btn color="primary" class="ml-4" size="small" @click="next">next</v-btn>
+      </div>
+      <br>
+      <router-view></router-view>  
+
+    </v-container>
+  </v-app>
+
+  <script type="module" src="/file?path=library/frontend.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+<v-row>
+    <!-- data folders -->
+    <v-col cols="6">
+        <v-card title="data folders">
+            <v-list :items="data_folders_items" v-model:selected="selected_folder" active-color="primary">
+            </v-list>
+        </v-card>
+    </v-col>
+
+    <!-- scans -->
+    <v-col cols="6">
+        <v-card title="scans">
+            <v-list :items="scans" active-color="primary">
+            </v-list>
+        </v-card>
+    </v-col>
+</v-row>
