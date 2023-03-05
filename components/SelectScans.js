@@ -10,26 +10,25 @@ export default {
     mounted() {
         axios.get("/data?task=scan_names&data_folders=" + JSON.stringify(this.store.data_folders)).then(res => {
             const data = res.data
+            console.log(data);
             this.scans_all = data
         })
     },
     computed: {
         data_folders() {
-            return this.store.data_folders.map(this.toItems)
+            return this.store.data_folders.map(function (item) {
+                return {
+                    title: item,
+                    value: item
+                }
+            })
         },
         scans() {
             if (this.selected_folder.length > 0) {
-                return this.scans_all[this.selected_folder[0]].map(function (scan) {
-                    return scan.scan_name
-                }).map(this.toItems)
-            }
-        }
-    },
-    methods:{
-        toItems(item) {
-            return {
-                title: item,
-                value: item
+                console.log(this.scans_all[this.selected_folder[0]][0].scan_name);
+                console.log(this.scans_all[this.selected_folder[0]][0].value);
+                console.log(this.scans_all[this.selected_folder[0]][0].disabled);
+                return this.scans_all[this.selected_folder[0]]
             }
         }
     },
@@ -45,11 +44,14 @@ export default {
 
     <!-- scans -->
     <v-col cols="6">
-        <v-card title="scans">
-            <v-list :items="scans" select-strategy="independent" active-color="primary">
-            </v-list>
-        </v-card>
-    </v-col>
+    <v-card title="scans">
+        <v-list select-strategy="independent" active-color="primary">
+            <v-list-item v-for="scan in scans" :key="scan.value" :value="scan.value" :disabled="scan.disabled">
+                <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
+            </v-list-item>
+        </v-list>
+    </v-card>
+</v-col>
 </v-row>
 `
 }

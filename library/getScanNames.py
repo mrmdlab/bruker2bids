@@ -18,12 +18,13 @@ for E_number in os.listdir(data_folder):
     # 1.make sure it's a folder
     # 2.make sure it has fid file. otherwise, the scan is uncompleted or not started
     # 3.read scan name from the acqp file
-    if os.path.isdir(data_folder+"/"+E_number) and E_number != "AdjResult":
-        result={"E_number": E_number}
+    scan_folder=data_folder+"/"+E_number # absolute path to an E number folder
+    if os.path.isdir(scan_folder) and E_number != "AdjResult":
+        result={"value": scan_folder}
         if os.path.isfile(data_folder+"/"+E_number+"/fid"):
-            result["status"]=1 # normal
+            result["disabled"]=False # normal
         else:
-            result["status"]=0 # uncompleted or not started
+            result["disabled"]=True # uncompleted or not started
         acqp_path = data_folder+"/"+E_number+"/acqp"
         result["scan_name"]=getScanName(acqp_path)
         scan_names.append(result)
