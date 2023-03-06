@@ -5,6 +5,7 @@ export default {
             store,
             scans_all: {},
             selected_folder: [], // only one element
+            scan_params:{}
         }
     },
     mounted() {
@@ -29,6 +30,17 @@ export default {
             }
         }
     },
+    methods:{
+        displayScanParams(scan){
+            this.scan_params=JSON.parse(JSON.stringify(scan))
+            delete this.scan_params["value"]
+            delete this.scan_params["disabled"]
+            delete this.scan_params["scan_name"]
+        },
+        emptyScanParams(){
+            this.scan_params={}
+        }
+    },
     template: 
 `
 <v-row>
@@ -43,17 +55,26 @@ export default {
     <!-- scans -->
     <v-col cols="6">
         <v-card title="scans" class="overflow-auto" height="200">
-            <v-list density="compact" select-strategy="independent" v-model:selected="store.selected_scans" active-color="primary">
-                <v-list-item v-for="scan in scans" :key="scan.value" :value="scan.value" :disabled="scan.disabled">
+            <v-list density="compact" select-strategy="independent" v-model:selected="store.selected_scans"
+                active-color="primary">
+                <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.value" :value="scan.value"
+                    :disabled="scan.disabled">
                     <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-card>
     </v-col>
+
     <!-- scan parameters -->
     <v-col>
         <v-card title="scan parameters" height="200">
-
+            <v-container>
+                <v-row class="d-flex justify-left">
+                    <v-col cols="3" v-for="(value, key) in scan_params">
+                        {{key}}: {{value}}
+                    </v-col>
+                </v-row>
+            </v-container>
         </v-card>
     </v-col>
 </v-row>
