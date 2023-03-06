@@ -1,15 +1,24 @@
 import store from "/file?path=library/store.js"
 export default {
-    data(){
+    data() {
         return {
             store
         }
     },
-    template:`
-<v-row>
-    <v-col cols="6">
-        <v-select v-model="store.data_folders" :items="store.data_list" label="data folders" multiple></v-select>
-    </v-col>
-</v-row>
+    computed: {
+        data_list() {
+            return this.store.data_list.map(function (item) {
+                return {
+                    title: item,
+                    value: item
+                }
+            })
+        }
+    },
+    template: `
+        <v-card title="data list">
+            <v-list density="compact" select-strategy="independent" :items="data_list" v-model:selected="store.data_folders" active-color="primary">
+            </v-list>
+        </v-card>
 `
 }

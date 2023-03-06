@@ -2,18 +2,31 @@ import sys
 import os
 import json
 
-def getScanName(acqp_path):
+def getScanParams(acqp_path,result):
     with open(acqp_path) as f:
         line = f.readline()
         while line:
-            if line.startswith("##$ACQ_scan_name="):
-                return f.readline()[1:-2]  # remove the angle brackets
+            for (key,value) in params.items():
+                if line.startswith(value):
+                    if line.endswith(")\n"):
+                        # the next line is the parameter
+                        result[key]=f.readline().replace("<","").replace(">","")
+                    else:
+                        # the current line is the parameter
+                        result[key]=line[line.index("=")+1:]
             line = f.readline()
 
 # path to data folder
 # eg. /opt/mridata/data/nmrsu/20230303_145030_mrmdPractice2910DREADD_1_1
 data_folder = sys.argv[1]
-scan_names = []
+scans = []
+
+# TODO add more parameters
+params={
+    "slice_thick":"##$ACQ_slice_thick=",
+    "scan_name":"##$ACQ_scan_name=",
+    "protocol_name":"##$ACQ_protocol_name="
+}
 for E_number in os.listdir(data_folder):
     # 1.make sure it's a folder
     # 2.make sure it has fid file. otherwise, the scan is uncompleted or not started
@@ -26,8 +39,8 @@ for E_number in os.listdir(data_folder):
         else:
             result["disabled"]=True # uncompleted or not started
         acqp_path = data_folder+"/"+E_number+"/acqp"
-        result["scan_name"]=getScanName(acqp_path)
-        scan_names.append(result)
+        getScanParams(acqp_path,result)
+        scans.append(result)
 
-# scan names, statuses and E numbers of one data folder
-print(json.dumps(scan_names))
+# paths, parameters, and statuses of scans in one data folder
+print(json.dumps(scans))

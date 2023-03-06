@@ -1,9 +1,26 @@
-<v-col cols="6">
-    <v-card title="scans">
-        <v-list select-strategy="independent" active-color="primary">
-            <v-list-item v-for="scan in scans" value="scan.value" :disabled="1">
-                <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
-            </v-list-item>
-        </v-list>
-    </v-card>
-</v-col>
+<v-row>
+    <!-- data folders -->
+    <v-col cols="6">
+        <v-card title="data folders" class="overflow-auto" height="300">
+            <v-list :items="data_folders" v-model:selected="selected_folder" active-color="primary">
+            </v-list>
+        </v-card>
+    </v-col>
+
+    <!-- scans -->
+    <v-col cols="6">
+        <v-card title="scans" class="overflow-auto" height="300">
+            <v-list select-strategy="independent" v-model:selected="store.selected_scans" active-color="primary">
+                <v-list-item v-for="scan in scans" :key="scan.value" :value="scan.value" :disabled="scan.disabled">
+                    <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-card>
+    </v-col>
+    <!-- scan parameters -->
+    <v-col>
+        <v-card title="scan parameters" height="300" class="mt-4">
+
+        </v-card>
+    </v-col>
+</v-row>

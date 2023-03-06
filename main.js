@@ -45,7 +45,7 @@ http.createServer(function (request, response) {
                         response.end()
                     })
                     break
-                case "scan_names":
+                case "scan_params":
                     /*
                      * data_folders: list of data folder names
                      */
@@ -53,13 +53,21 @@ http.createServer(function (request, response) {
                     const data_folders = JSON.parse(query.data_folders)
                     data_folders.forEach(folder => {
                         const data_folder = data_directory + "/" + folder
-                        const stdout=child_process.execSync("python library/getScanNames.py " + data_folder)
+                        const stdout = child_process.execSync("python library/getScanParams.py " + data_folder)
                         result[folder] = JSON.parse(stdout)
                     });
                     response.write(JSON.stringify(result))
                     response.end()
                     break
             }
+            break
+        case "preview":
+            break
+        case "/confirm":
+            //todo
+            child_process.exec(util.format("bash scripts/bruker2bids_%s.sh -d %s -o %a -c %s"), query.software, input_dir, output_dir, config)
+            response.writeHead(200, { "Content-Type": "text/plain" })
+            response.end()
             break
     }
 }).listen(port, function () {

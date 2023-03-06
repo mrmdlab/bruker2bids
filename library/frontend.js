@@ -9,6 +9,8 @@ createApp({
     return {
       store,
       prompt: "Please select data folders",
+      software: "dicomifier",
+      next_step: "next"
     }
   },
   mounted() {
@@ -22,11 +24,27 @@ createApp({
   methods:
   {
     next() {
-      this.$router.push("/select_scans")
-      this.prompt="Please select scans"
+      switch (this.next_step) {
+        case "next":
+          this.$router.push("/select_scans")
+          this.prompt = "Please select scans"
+          this.next_step = "preview"
+          break
+        case "preview":
+          // console.log(this.store.selected_scans)
+          break
+      }
     },
     back() {
       this.$router.push("/")
+      this.prompt = "Please select data folders"
+      this.next_step = "next"
+    },
+    cancel(){
+
+    },
+    confirm(){
+      axios.get("/confirm?software="+this.software)
     }
   }
 }).use(vuetify).use(router).mount('#app')
