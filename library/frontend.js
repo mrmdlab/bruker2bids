@@ -37,6 +37,12 @@ createApp({
           this.next_step = "preview"
           break
         case "preview":
+          const request="/preview?config="+this.store.config+"&selected_scans="+JSON.stringify(this.store.selected_scans)
+          axios.get(request).then(res=>{
+            const data=res.data
+            console.log(data);
+            //TODO
+          })
           // console.log(this.store.selected_scans)
           break
       }

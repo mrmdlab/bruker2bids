@@ -58,9 +58,29 @@ http.createServer(function (request, response) {
             }
             break
         case "/preview":
+            /**
+             * query:
+             * 
+             * selected_scans
+             * config
+             */
+            response.writeHead(200, { "Content-Type": "text/plain" })
+            const selected_scans=JSON.parse(query.selected_scans)
+            const config=JSON.parse(query.config)
+            //TODO
+            child_process.exec("echo 111",function(err,stdout,stderr){
+                response.write(stdout)
+                response.end()
+            })
             break
         case "/confirm":
-            //todo
+            // TODO
+            /**
+             * query:
+             * 
+             * software
+             * 
+             */
             child_process.exec(util.format("bash scripts/bruker2bids_%s.sh -d %s -o %a -c %s"), query.software, input_dir, output_dir, config)
             response.writeHead(200, { "Content-Type": "text/plain" })
             response.end()

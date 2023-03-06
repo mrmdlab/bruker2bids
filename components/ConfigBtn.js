@@ -4,24 +4,24 @@ export default {
     return {
       store,
       dialog: false,
-      config: "", // json string
       config_edited:""
     }
   },
   mounted() {
     axios.get("/file?path=configs/config_default.json", { responseType: 'text' }).then(res => {
       const data = res.data
-      this.config = data
+      this.store.config = data
     })
   },
   methods:{
     save(){
       this.dialog = false
-      this.config=this.config_edited    
+      this.store.config=this.config_edited    
     },
     openConfig(){
-      this.config_edited=this.config
+      this.config_edited=this.store.config
     }
+    // TODO
     // saveAs(){
 
     // },

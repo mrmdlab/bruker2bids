@@ -57,7 +57,7 @@ export default {
         <v-card title="scans" class="overflow-auto" height="200">
             <v-list density="compact" select-strategy="independent" v-model:selected="store.selected_scans"
                 active-color="primary">
-                <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.value" :value="scan.value"
+                <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.value" :value="scan"
                     :disabled="scan.disabled">
                     <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
                 </v-list-item>
