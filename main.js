@@ -19,16 +19,12 @@ http.createServer(function (request, response) {
     switch (pathname) {
         case "/":
             fs.readFile("index.html", function (err, data) {
-                response.writeHead(200, { "Content-Type": "text/html" });
-                response.write(data.toString());
-                response.end();
+                readFileCallback(response, data, "text/html")
             })
             break
         case "/file":
             fs.readFile(query.path, function (err, data) {
-                response.writeHead(200, { "Content-Type": "text/javascript" });
-                response.write(data.toString());
-                response.end();
+                readFileCallback(response, data, "text/javascript")
             })
             break
         case "/data":
@@ -61,7 +57,7 @@ http.createServer(function (request, response) {
                     break
             }
             break
-        case "preview":
+        case "/preview":
             break
         case "/confirm":
             //todo
@@ -90,4 +86,10 @@ function getIPAdress() {
             }
         }
     }
+}
+
+function readFileCallback(response, data, content_type) {
+    response.writeHead(200, { "Content-Type": content_type });
+    response.write(data.toString());
+    response.end();
 }

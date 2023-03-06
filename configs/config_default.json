@@ -1,0 +1,35 @@
+{
+	"descriptions": [
+		{
+			"dataType": "func",
+			"modalityLabel": "bold",
+			"customLabels": "task-rest_acq-geEPI",
+			"criteria": {
+				"SeriesDescription": "*BOLD*"
+			}
+		},
+		{
+			"dataType": "anat",
+			"modalityLabel": "T2w",
+			"customLabels": "acq-TurboRARE",
+			"criteria": {
+				"SeriesDescription": "*T2*"
+			}
+		},
+		{
+			"dataType": "anat",
+			"modalityLabel": "T1w",
+			"customLabels": "acq-FLASH",
+			"criteria": {
+				"SeriesDescription": "*T1*"
+			}
+		},
+		{
+			"dataType": "dwi",
+			"modalityLabel": "dwi",
+			"criteria": {
+				"SeriesDescription": "*DTI*"
+			}
+		}
+	]
+}

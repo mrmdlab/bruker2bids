@@ -4,12 +4,18 @@ const vuetify = createVuetify()
 import router from "/file?path=library/router.js"
 import store from "/file?path=library/store.js"
 
+import OptionBtn from "/file?path=components/OptionBtn.js"
+import ConfigBtn from "/file?path=components/ConfigBtn.js"
+
 createApp({
+  components:{
+    OptionBtn,
+    ConfigBtn
+  },
   data() {
     return {
       store,
       prompt: "Please select data folders",
-      software: "dicomifier",
       next_step: "next"
     }
   },

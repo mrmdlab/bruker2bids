@@ -19,16 +19,11 @@
       <h4>data directory: {{store.data_directory}}</h4>
       <div class="d-flex justify-space-between">
         <span>{{prompt}}</span>
-        <v-radio-group inline class="d-flex justify-center">
-          <input type="radio" name="software" id="dicomifier" value="dicomifier" v-model="software">
-          <label for="dicomifier">dicomifier</label>
-          <input type="radio" name="software" id="dcm2niix" value="dcm2niix" v-model="software" class="ml-4">
-          <label for="dcm2niix">dcm2niix</label>
-        </v-radio-group>
+        <v-spacer></v-spacer>
 
-
-        <!-- <v-spacer></v-spacer> -->
-        <v-btn color="primary" size="small" @click="back">back</v-btn>
+        <option-btn></option-btn>
+        <config-btn class="ml-4"></config-btn>
+        <v-btn color="primary" size="small" @click="back" class="ml-4">back</v-btn>
         <v-btn color="primary" size="small" @click="next" class="ml-4">{{next_step}}</v-btn>
       </div>
       <br>
