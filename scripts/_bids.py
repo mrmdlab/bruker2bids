@@ -11,18 +11,19 @@ def meetCriteria(scan, description):
     criteria = description["criteria"]
     for key in criteria.keys():
         if type(criteria[key]) == str:
-            if not fnmatch(scan.get(key, ""), criteria[key]):
-                return
+            if not fnmatch(scan.get(key, "").lower(), criteria[key].lower()):
+                return False
         else:
             # criteria[key] is a list of str
             i = 0
             while i < len(criteria[key]):
-                if fnmatch(scan.get(key, ""), criteria[key][i]):
+                if fnmatch(scan.get(key, "").lower(), criteria[key][i].lower()):
                     break
                 i += 1
             if i == len(criteria[key]):
-                return
+                return False
     postMeetCriteria(scan, description)
+    return True
 
 
 def postMeetCriteria(scan, description):
@@ -54,9 +55,11 @@ if __name__ == "__main__":
 
     with open(config_file) as f:
         descriptions = json.load(f)["descriptions"]
-        for i in range(len(descriptions)):
-            for scan in scans:
-                meetCriteria(scan, descriptions[i])
+        # if the scan is met by more than one criteria, only the first will be considered
+        for scan in scans:
+            for i in range(len(descriptions)):
+                if meetCriteria(scan, descriptions[i]):
+                    break
 
     for (bids_path, scan_list) in runs.items():
         if len(scan_list) == 1:

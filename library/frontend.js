@@ -16,7 +16,7 @@ createApp({
     return {
       store,
       prompt: "Please select data folders",
-      next_step: "next"
+      
     }
   },
   mounted() {
@@ -30,16 +30,16 @@ createApp({
   methods:
   {
     next() {
-      switch (this.next_step) {
+      switch (this.store.next_step) {
         case "next":
           this.$router.push("/select_scans")
           this.prompt = "Please select scans"
-          this.next_step = "preview"
+          this.store.next_step = "preview"
           break
         case "preview":
           this.$router.push("/preview")
           this.prompt = ""
-          this.next_step = "confirm"
+          this.store.next_step = "confirm"
           const request = "/preview?config=" + this.store.config + "&selected_scans=" + this.resolveSelectedScans(this.store.selected_scans)
           axios.get(request).then(res => {
             const data = res.data
@@ -52,28 +52,25 @@ createApp({
             params: {
               software: this.store.software,
               output_dir: this.store.output_dir,
-              output_type: this.store.output_type,
-              selected_scans: this.resolveSelectedScans(this.store.selected_scans),
-              config: this.store.config
+              output_type: this.store.output_type
             }
           }).then(res => {
-            const data = res.data
             alert("BIDS conversion begins! Progress is displayed in server console")
           })
           break
       }
     },
     back() {
-      switch (this.next_step) {
+      switch (this.store.next_step) {
         case "confirm":
           this.$router.push("/select_scans")
           this.prompt = "Please select scans"
-          this.next_step = "preview"
+          this.store.next_step = "preview"
           break
         case "preview":
           this.$router.push("/")
           this.prompt = "Please select data folders"
-          this.next_step = "next"
+          this.store.next_step = "next"
           break
       }
     },

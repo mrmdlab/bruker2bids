@@ -5,7 +5,7 @@
 			"modalityLabel": "bold",
 			"customLabels": "task-rest_acq-geEPI",
 			"criteria": {
-				"scan_name": ["*MRI*","*bold*"]
+				"scan_name": ["*EPI*","*bold*","*fMRI*"]
 			}
 		},
 		{

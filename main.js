@@ -8,13 +8,20 @@ const ip_address = getIPAdress()
 let port = 55903
 const data_directory = process.argv.splice(2)[0]
 
+let updated_scans = [] // each element is a scan object, only those with bids_path property can be converted
+let total = 0 // for progress display
+let config_tmp = ""
+let tmp_bruker2bids = ""
+let output_dir_default = ""
+
 const server = http.createServer(function (request, response) {
     const req_url = url.parse(request.url, true)
     const pathname = req_url.pathname
     const query = req_url.query
 
-    const config_tmp = "configs/config_tmp_" + port + ".json"
-    const tmp_bruker2bids = "tmp_bruker2bids_" + port
+    config_tmp = "configs/config_tmp_" + port + ".json"
+    tmp_bruker2bids = "tmp_bruker2bids_" + port // add port number at the end, in case multiple users' operation interferes
+    output_dir_default = "output_bruker2bids_" + port
     // console.log(req_url.path)
     // console.log(pathname)
     // console.log(req_url)
@@ -68,45 +75,8 @@ const server = http.createServer(function (request, response) {
              * config
              */
 
-            // save `config_tmp_{port}.json`
-            fs.writeFileSync(config_tmp, query.config)
-
-            // add bids_path property  eg.
-            // bids_path: 'sub-mrmdPractice5902DREADD/ses-iv01/func/sub-mrmdPractice5902DREADD_ses-iv01_task-rest_acq-geEPI_bold'
-            let updated_scans = child_process.execSync(util.format("python scripts/_bids.py '%s' %s", query.selected_scans, config_tmp))
-            updated_scans = JSON.parse(updated_scans)
-            console.log(query.selected_scans);
-            console.log("-----------------");
-            console.log(updated_scans);
-            updated_scans.forEach(function(scan){
-                // create empty folders
-                console.log(scan.bids_path);
-                if (scan.bids_path){
-                    child_process.execSync("mkdir -p "+tmp_bruker2bids+"/"+scan.bids_path+".json")
-                    child_process.execSync("mkdir -p "+tmp_bruker2bids+"/"+scan.bids_path+".nii.gz")
-                }
-            })
-            child_process.exec("tree "+tmp_bruker2bids,function(err, stdout, stderr){
-                response.writeHead(200, { "Content-Type": "text/plain" })
-                response.write(stdout)
-                response.end()
-                child_process.execSync("rm -rf "+tmp_bruker2bids)
-            })
-            break
-        case "/confirm":
-            // TODO
             /**
-             * query:
-             * 
-             * software
-             * selected_scans -> list
-             * config -> json
-             * output_dir
-             * output_type
-             */
-            const selected_scans = JSON.parse(query.selected_scans)
-            /**
-             * selected_scans:
+             * selected_scans: eg.
              * 
              * [ { path: '/opt/mridata/data/nmrsu/20230303_110418_mrmdPractice4405DREADD_1_2/3',
                   
@@ -119,22 +89,90 @@ const server = http.createServer(function (request, response) {
                 ...
             ]
              */
-            // TODO print progress
 
-            // let updated_scans=child_process.execSync(util.format('python scripts/_bids.py "%s" "%s" %s', query.selected_scans, query.output_dir, config_tmp))
-            // updated_scans=JSON.parse(updated_scans)
-            selected_scans.forEach(function (scan) {
-                switch (query.software) {
-                    case "dicomifier":
-                        child_process.execSync(util.format('dicomifier nii -z "%s" %s', scan.path, tmp_bruker2bids))
-                        break
-                    case "dcm2niix":
-                        break
+            // save `config_tmp_{port}.json`
+            fs.writeFileSync(config_tmp, query.config)
+
+            // add bids_path property  eg.
+            // bids_path: 'sub-mrmdPractice5902DREADD/ses-iv01/func/sub-mrmdPractice5902DREADD_ses-iv01_task-rest_acq-geEPI_bold'
+            updated_scans = child_process.execSync(util.format("python scripts/_bids.py '%s' %s", query.selected_scans, config_tmp))
+            updated_scans = JSON.parse(updated_scans)
+
+            total = 0
+            updated_scans.forEach(function (scan) {
+                // create empty folders
+                // console.log(scan.bids_path);
+                if (scan.bids_path) {
+                    total++
+                    child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".json")
+                    child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".nii.gz")
                 }
-                child_process.execSync(util.format("bash scripts/bruker2bids.sh %s %s %s", query.software, scan.path, xxx))
             })
+            child_process.exec("tree " + tmp_bruker2bids, function (err, stdout, stderr) {
+                response.writeHead(200, { "Content-Type": "text/plain" })
+                response.write(stdout)
+                response.end()
+                child_process.exec("rm -rf " + tmp_bruker2bids)
+            })
+            break
+        case "/confirm":
+            // selected_scans.forEach(function (scan) {
+            //     switch (query.software) {
+            //         case "dicomifier":
+            //             child_process.execSync(util.format('dicomifier nii -z "%s" %s', scan.path, tmp_bruker2bids))
+            //             break
+            //         case "dcm2niix":
+            //             break
+            //     }
+            //     child_process.execSync(util.format("bash scripts/bruker2bids.sh %s %s %s", query.software, scan.path, xxx))
+            // })
+
+            // switch (query.software) {
+            //     case "dicomifier":
+            //         child_process.execSync(util.format('dicomifier nii -z "%s" %s', scan.path, tmp_bruker2bids))
+            //         child_process.execSync(util.format('mv %s/', scan.path, tmp_bruker2bids))
+            //         break
+            //     case "dcm2niix":
+            //         break
+            // }
+
+            /**
+             * query:
+             * 
+             * software
+             * output_dir
+             * output_type
+             */
+
             response.writeHead(200, { "Content-Type": "text/plain" })
             response.end()
+            const output_dir = query.output_dir.replace("~", "$HOME")
+
+            switch (query.output_type) {
+                case "zip":
+                    convert(updated_scans, query, output_dir_default)
+                    console.log("##########Compression Begins###########");
+                    child_process.execSync("mkdir -p " + output_dir)
+                    child_process.exec(util.format('zip -r "%s"/output_bruker2bids.zip "%s"', output_dir, output_dir_default), function () {
+                        child_process.execSync("rm -rf " + output_dir_default)
+                        console.log("##########Compression Ends###########");
+                    })
+                    break
+                case "tar.gz":
+                    convert(updated_scans, query, output_dir_default)
+                    console.log("##########Compression Begins###########");
+                    child_process.execSync("mkdir -p " + output_dir)
+                    child_process.exec(util.format('tar -cf "%s"/output_bruker2bids.tar "%s" && pigz "%s"/output_bruker2bids.tar', output_dir, output_dir_default, output_dir), function () {
+                        child_process.execSync("rm -rf " + output_dir_default)
+                        console.log("##########Compression Ends###########");
+                    })
+                    break
+                case "files":
+                    convert(updated_scans, query, output_dir)
+                    break
+            }
+
+            child_process.exec("rm -rf " + tmp_bruker2bids)
             break
     }
 }).once('listening', function () {
@@ -168,4 +206,19 @@ function readFileCallback(response, data, content_type) {
     response.writeHead(200, { "Content-Type": content_type });
     response.write(data.toString());
     response.end();
+}
+
+function convert(updated_scans, query, output_dir) {
+    console.log("##########Convertion Begins###########");
+    let n = 0
+    updated_scans.forEach(function (scan) {
+        if (scan.bids_path) {
+            child_process.execSync(util.format('bash scripts/_%s.sh "%s" "%s" "%s" "%s"', query.software, scan.path, output_dir, scan.bids_path, tmp_bruker2bids))
+            n++
+            const last_back_slash = scan.bids_path.lastIndexOf("/")
+            const bids_name = scan.bids_path.substr(last_back_slash + 1)
+            console.log(util.format("%d/%d:%s", n, total, bids_name));
+        }
+    })
+    console.log("##########Convertion Ends###########");
 }

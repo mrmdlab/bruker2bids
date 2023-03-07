@@ -39,14 +39,17 @@ export default {
                         <p class="font-weight-bold">output type</p>
                     </v-col>
                     <v-col cols="9" class="py-0">
-                        <v-radio-group inline class="d-flex justify-left">
-                            <input type="radio" name="output_type" id="zip" value="zip"
-                                v-model="store.output_type">
-                            <label for="zip">zip</label>
-                            <input class="ml-2" type="radio" name="output_type" id="files" value="files"
-                                v-model="store.output_type">
-                            <label for="files">files</label>
-                        </v-radio-group>
+                    <v-radio-group inline class="d-flex justify-left">
+                        <input type="radio" name="output_type" id="zip" value="zip"
+                            v-model="store.output_type">
+                        <label for="zip">zip</label>
+                        <input type="radio" name="output_type" id="tar.gz" value="tar.gz"
+                            v-model="store.output_type">
+                        <label for="tar.gz">tar.gz</label>
+                        <input class="ml-2" type="radio" name="output_type" id="files" value="files"
+                            v-model="store.output_type">
+                        <label for="files">files</label>
+                    </v-radio-group>
                     </v-col>
 
                     <!-- output directory -->

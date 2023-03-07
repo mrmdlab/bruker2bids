@@ -16,7 +16,10 @@ export default {
   methods:{
     save(){
       this.dialog = false
-      this.store.config=this.config_edited    
+      this.store.config=this.config_edited
+      if (this.store.next_step=="confirm"){
+        this.store.next_step="preview"
+      }
     },
     openConfig(){
       this.config_edited=this.store.config
