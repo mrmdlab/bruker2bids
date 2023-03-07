@@ -8,7 +8,7 @@ import OptionBtn from "/file?path=components/OptionBtn.js"
 import ConfigBtn from "/file?path=components/ConfigBtn.js"
 
 createApp({
-  components:{
+  components: {
     OptionBtn,
     ConfigBtn
   },
@@ -37,26 +37,45 @@ createApp({
           this.next_step = "preview"
           break
         case "preview":
-          const request="/preview?config="+this.store.config+"&selected_scans="+JSON.stringify(this.store.selected_scans)
-          axios.get(request).then(res=>{
-            const data=res.data
+          this.$router.push("/preview")
+          this.prompt = ""
+          this.next_step = "confirm"
+          const request = "/preview?config=" + this.store.config + "&selected_scans=" + JSON.stringify(this.store.selected_scans)
+          axios.get(request).then(res => {
+            const data = res.data
             console.log(data);
             //TODO
           })
-          // console.log(this.store.selected_scans)
+          break
+        case "confirm":
+          axios.get("/confirm", {
+            params: {
+              software: this.store.software,
+              output_dir: this.store.output_dir,
+              output_type: this.store.output_type,
+              selected_scans: JSON.stringify(this.store.selected_scans),
+              config: this.store.config
+            }
+          }).then(res => {
+            const data = res.data
+            alert("BIDS conversion begins! Progress is displayed in server console")
+          })
           break
       }
     },
     back() {
-      this.$router.push("/")
-      this.prompt = "Please select data folders"
-      this.next_step = "next"
-    },
-    cancel(){
-
-    },
-    confirm(){
-      axios.get("/confirm?software="+this.software)
+      switch (this.next_step) {
+        case "confirm":
+          this.$router.push("/select_scans")
+          this.prompt = "Please select scans"
+          this.next_step = "preview"
+          break
+        case "preview":
+          this.$router.push("/")
+          this.prompt = "Please select data folders"
+          this.next_step = "next"
+          break
+      }
     }
   }
 }).use(vuetify).use(router).mount('#app')

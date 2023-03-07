@@ -9,9 +9,23 @@ def getScanParams(file_path, params, result):
         while line:
             for (key, value) in params.items():
                 if line.startswith(value):
-                    # the next line is the parameter
-                    result[key] = f.readline().replace("<", "").replace(">", "").replace("\n", "")
+                    if line.endswith(")\n"):
+                        # the next line is the parameter
+                        result[key] = f.readline().replace(
+                            "<", "").replace(">", "").replace("\n", "")
+                    else:
+                        # the current line is the parameter
+                        result[key] = line[len(value):].replace("\n", "")
             line = f.readline()
+    for key in result.keys():
+        if key in ["TE","TR"]:
+            result[key]=f'{round(float(result[key]))} ms'
+        elif key == "date_time":
+            result["date_time"] = result["date_time"][1:20] # from "<2023-03-03T15:39:40,659+0800>" to "2023-03-03T15:39:40"
+        elif key == "scan_duration":
+            result["scan_duration"] = f'{round(float(result["scan_duration"])/60000,1)} min'
+        elif key == "slice_thickness":
+            result["slice_thickness"]+=" mm"
 
 
 # path to data folder
@@ -24,9 +38,19 @@ scans = []
 params = {
     "scan_name": "##$VisuSeriesComment=",
     "protocol_name": "##$VisuAcquisitionProtocol=",
-    "slice_thickness": "##$VisuCoreFrameThickness=",
+    "sequence_name": "##$VisuAcqSequenceName=",
     "subject": "##$VisuSubjectId=",
     "session": "##$VisuStudyId=",
+    "slice_thickness": "##$VisuCoreFrameThickness=",  # mm
+    "ETL": "##$VisuAcqEchoTrainLength=",
+    "TR": "##$VisuAcqRepetitionTime=",  # ms
+    "TE": "##$VisuAcqEchoTime=",  # ms
+    "flip_angle": "##$VisuAcqFlipAngle=",
+    "scan_duration": "##$VisuAcqScanTime=", # milliseconds, need dividing by 60000, to be minutes
+    "date_time": "##$VisuAcqDate=",  # need converting to time object
+    "averages": "##$VisuAcqNumberOfAverages=",
+    "E_number":"##$VisuExperimentNumber=",
+    # "image_size": "##$VisuAcqSize="
 }
 
 # for acqp
@@ -42,9 +66,13 @@ for E_number in os.listdir(data_folder):
         result = {"path": scan_folder}
         if os.path.isfile(data_folder+"/"+E_number+"/fid"):
             result["disabled"] = False  # normal
-            visu_pars_path = data_folder+"/"+E_number+"/pdata/1/visu_pars"
+            visu_pars_path = data_folder+"/"+E_number+"/visu_pars"
+            # there are two slightly different visu_pars files, but this one doesn't always exist
+            # visu_pars_path = data_folder+"/"+E_number+"/pdata/1/visu_pars" 
             getScanParams(visu_pars_path, params, result)
-            result["scan_name"] += f" (E{E_number})" # scan name from visu_pars doesn't contain E number
+            # if "scan_name" in result.keys():
+            #     # scan name from visu_pars doesn't contain E number
+            #     result["scan_name"] += f" (E{E_number})"
         else:
             result["disabled"] = True  # uncompleted or not started
             acqp_path = data_folder+"/"+E_number+"/acqp"

@@ -33,9 +33,9 @@ export default {
     methods:{
         displayScanParams(scan){
             this.scan_params=JSON.parse(JSON.stringify(scan))
-            delete this.scan_params["value"]
             delete this.scan_params["disabled"]
-            delete this.scan_params["scan_name"]
+            // delete this.scan_params["scan_name"]
+            delete this.scan_params["path"]
         },
         emptyScanParams(){
             this.scan_params={}
@@ -59,7 +59,8 @@ export default {
                 active-color="primary">
                 <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.value" :value="scan"
                     :disabled="scan.disabled">
-                    <v-list-item-title>{{scan.scan_name}}</v-list-item-title>
+                    <v-list-item-title>{{scan.scan_name+" (E"+scan.E_number+")"}}</v-list-item-title>
+                    <v-list-item-subtitle>{{scan.protocol_name}}</v-list-item-subtitle>
                 </v-list-item>
             </v-list>
         </v-card>
@@ -67,10 +68,10 @@ export default {
 
     <!-- scan parameters -->
     <v-col>
-        <v-card title="scan parameters" height="200">
+        <v-card title="scan parameters" height="250">
             <v-container>
                 <v-row class="d-flex justify-left">
-                    <v-col cols="3" v-for="(value, key) in scan_params">
+                    <v-col cols="3" v-for="(value, key) in scan_params" class="py-0">
                         {{key}}: {{value}}
                     </v-col>
                 </v-row>

@@ -5,7 +5,7 @@
 			"modalityLabel": "bold",
 			"customLabels": "task-rest_acq-geEPI",
 			"criteria": {
-				"SeriesDescription": "*BOLD*"
+				"scan_name": "*BOLD*"
 			}
 		},
 		{
@@ -13,7 +13,7 @@
 			"modalityLabel": "T2w",
 			"customLabels": "acq-TurboRARE",
 			"criteria": {
-				"SeriesDescription": "*T2*"
+				"scan_name": "*T2*"
 			}
 		},
 		{
@@ -21,14 +21,14 @@
 			"modalityLabel": "T1w",
 			"customLabels": "acq-FLASH",
 			"criteria": {
-				"SeriesDescription": "*T1*"
+				"scan_name": ["*T1*"]
 			}
 		},
 		{
 			"dataType": "dwi",
 			"modalityLabel": "dwi",
 			"criteria": {
-				"SeriesDescription": "*DTI*"
+				"scan_name": "*DTI*"
 			}
 		}
 	]
