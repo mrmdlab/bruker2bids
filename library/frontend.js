@@ -40,11 +40,11 @@ createApp({
           this.$router.push("/preview")
           this.prompt = ""
           this.next_step = "confirm"
-          const request = "/preview?config=" + this.store.config + "&selected_scans=" + JSON.stringify(this.store.selected_scans)
+          const request = "/preview?config=" + this.store.config + "&selected_scans=" + this.resolveSelectedScans(this.store.selected_scans)
           axios.get(request).then(res => {
             const data = res.data
-            console.log(data);
-            //TODO
+            this.store.bids_tree = data
+            // console.log(data);
           })
           break
         case "confirm":
@@ -53,7 +53,7 @@ createApp({
               software: this.store.software,
               output_dir: this.store.output_dir,
               output_type: this.store.output_type,
-              selected_scans: JSON.stringify(this.store.selected_scans),
+              selected_scans: this.resolveSelectedScans(this.store.selected_scans),
               config: this.store.config
             }
           }).then(res => {
@@ -76,6 +76,11 @@ createApp({
           this.next_step = "next"
           break
       }
+    },
+    resolveSelectedScans(select_scans) {
+      return JSON.stringify(select_scans.map(function (scan) {
+        return JSON.parse(scan)
+      }))
     }
   }
 }).use(vuetify).use(router).mount('#app')

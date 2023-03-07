@@ -7,6 +7,11 @@ export default {
     },
     template:
         `
-<h1>preview</h1>
+        <v-card title="BIDS tree preview">
+        <v-container>
+            <pre v-text="store.bids_tree"></pre>
+        </v-container>
+    </v-card>
+    
 `
 }

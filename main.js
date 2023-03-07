@@ -15,7 +15,7 @@ const server = http.createServer(function (request, response) {
 
     const config_tmp = "configs/config_tmp_" + port + ".json"
     const tmp_bruker2bids = "tmp_bruker2bids_" + port
-    console.log(req_url.path)
+    // console.log(req_url.path)
     // console.log(pathname)
     // console.log(req_url)
     // console.log(query)
@@ -67,20 +67,30 @@ const server = http.createServer(function (request, response) {
              * selected_scans
              * config
              */
-            response.writeHead(200, { "Content-Type": "text/plain" })
 
             // save `config_tmp_{port}.json`
-            fs.writeFile(config_tmp, query.config, function () {
-                let updated_scans = child_process.execSync(util.format("python scripts/_bids.py '%s' %s", query.selected_scans, config_tmp))
-                updated_scans = JSON.parse(updated_scans)
-                console.log("-----------------");
-                console.log(updated_scans);
+            fs.writeFileSync(config_tmp, query.config)
 
+            // add bids_path property  eg.
+            // bids_path: 'sub-mrmdPractice5902DREADD/ses-iv01/func/sub-mrmdPractice5902DREADD_ses-iv01_task-rest_acq-geEPI_bold'
+            let updated_scans = child_process.execSync(util.format("python scripts/_bids.py '%s' %s", query.selected_scans, config_tmp))
+            updated_scans = JSON.parse(updated_scans)
+            console.log(query.selected_scans);
+            console.log("-----------------");
+            console.log(updated_scans);
+            updated_scans.forEach(function(scan){
+                // create empty folders
+                console.log(scan.bids_path);
+                if (scan.bids_path){
+                    child_process.execSync("mkdir -p "+tmp_bruker2bids+"/"+scan.bids_path+".json")
+                    child_process.execSync("mkdir -p "+tmp_bruker2bids+"/"+scan.bids_path+".nii.gz")
+                }
             })
-            // console.log(updated_scans);
-            child_process.exec("echo preview done", function (err, stdout, stderr) {
+            child_process.exec("tree "+tmp_bruker2bids,function(err, stdout, stderr){
+                response.writeHead(200, { "Content-Type": "text/plain" })
                 response.write(stdout)
                 response.end()
+                child_process.execSync("rm -rf "+tmp_bruker2bids)
             })
             break
         case "/confirm":

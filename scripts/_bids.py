@@ -58,13 +58,13 @@ if __name__ == "__main__":
             for scan in scans:
                 meetCriteria(scan, descriptions[i])
 
-    for (bids_path, scans) in runs.items():
-        if len(scans) == 1:
-            scans[0]["bids_path"] = bids_path
+    for (bids_path, scan_list) in runs.items():
+        if len(scan_list) == 1:
+            scan_list[0]["bids_path"] = bids_path
         else:
             underscore_index = bids_path.rindex("_")
             bids_path_first_half = bids_path[:underscore_index]
             modalityLabel = bids_path[underscore_index+1:]
-            for i, scan in enumerate(sorted(scans, key=lambda scan: datetime.strptime(scan.get("date_time", "2000-01-01T00:00:00"), '%Y-%m-%dT%H:%M:%S'))):
+            for i, scan in enumerate(sorted(scan_list, key=lambda scan: datetime.strptime(scan.get("date_time", "2000-01-01T00:00:00"), '%Y-%m-%dT%H:%M:%S'))):
                 scan["bids_path"] = f"{bids_path_first_half}_run-{i+1}_{modalityLabel}"
     print(json.dumps(scans))
