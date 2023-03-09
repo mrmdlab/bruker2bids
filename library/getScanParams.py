@@ -19,11 +19,17 @@ def getScanParams(file_path, params, result):
             line = f.readline()
     for key in result.keys():
         if key in ["TE","TR"]:
-            result[key]=f'{round(float(result[key]))} ms'
+            try:
+                result[key]=f'{round(float(result[key]))} ms'
+            except Exception:
+                pass
         elif key == "date_time":
             result["date_time"] = result["date_time"][1:20] # from "<2023-03-03T15:39:40,659+0800>" to "2023-03-03T15:39:40"
         elif key == "scan_duration":
-            result["scan_duration"] = f'{round(float(result["scan_duration"])/60000,1)} min'
+            try:
+                result["scan_duration"] = f'{round(float(result["scan_duration"])/60000,1)} min'
+            except Exception:
+                pass
         elif key == "slice_thickness":
             result["slice_thickness"]+=" mm"
 
