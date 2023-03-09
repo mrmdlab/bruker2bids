@@ -9,12 +9,12 @@ const store = reactive({
     selected_folder: [], // only one element
 
     selected_scans:[], // list of scans, each scan is an object derived from `getScanParams.py`
-    software: "dicomifier",
-    output_dir:"output_bruker2bids",
-    output_type:"files",
+    software: "dcm2niix",
+    output_dir:"",
+    output_type:"zip",
     config:"", // json string
 
-    bids_tree:""
+    bids_tree:"",    
 })
 
 export default store

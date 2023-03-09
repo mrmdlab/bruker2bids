@@ -5,7 +5,7 @@
 			"modalityLabel": "bold",
 			"customLabels": "task-rest_acq-geEPI",
 			"criteria": {
-				"scan_name": ["*EPI*","*bold*","*fMRI*"]
+				"scan_name": ["*bold*","*fMRI*"]
 			}
 		},
 		{
@@ -21,15 +21,25 @@
 			"modalityLabel": "T1w",
 			"customLabels": "acq-FLASH",
 			"criteria": {
-				"scan_name": ["*T1*","*FLASH*"]
+				"scan_name": ["*marker*","*T1*","*FLASH*"]
 			}
 		},
 		{
 			"dataType": "dwi",
 			"modalityLabel": "dwi",
+			"customLabels": "acq-geEPItopup",
+			"criteria": {
+				"scan_name": ["*topup*"]
+			}
+		},
+		{
+			"dataType": "dwi",
+			"modalityLabel": "dwi",
+			"customLabels": "acq-geEPI",
 			"criteria": {
 				"scan_name": ["*dwi*","*dti*"]
 			}
 		}
+
 	]
 }

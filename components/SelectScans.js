@@ -4,7 +4,7 @@ export default {
         return {
             store,
             scans_all: {},
-            scan_params:{}
+            scan_params: {}
         }
     },
     mounted() {
@@ -29,19 +29,29 @@ export default {
             }
         }
     },
-    methods:{
-        displayScanParams(scan){
-            this.scan_params=JSON.parse(JSON.stringify(scan))
+    methods: {
+        displayScanParams(scan) {
+            this.scan_params = JSON.parse(JSON.stringify(scan))
             delete this.scan_params["disabled"]
             delete this.scan_params["path"]
             // delete this.scan_params["scan_name"]
         },
-        emptyScanParams(){
-            this.scan_params={}
+        emptyScanParams() {
+            this.scan_params = {}
+        },
+        scan_name(scan) {
+            if (scan.scan_name) {
+                if (scan.E_number) {
+
+                    return scan.scan_name + " (E" + scan.E_number + ")"
+                } else {
+                    return scan.scan_name
+                }
+            }
         }
     },
-    template: 
-`
+    template:
+        `
 <v-row>
     <!-- data folders -->
     <v-col cols="6">
@@ -58,7 +68,7 @@ export default {
                 active-color="primary">
                 <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.path" :value="JSON.stringify(scan)"
                     :disabled="scan.disabled">
-                    <v-list-item-title>{{scan.scan_name+" (E"+scan.E_number+")"}}</v-list-item-title>
+                    <v-list-item-title>{{scan_name(scan)}}</v-list-item-title>
                     <v-list-item-subtitle>{{scan.protocol_name}}</v-list-item-subtitle>
                 </v-list-item>
             </v-list>

@@ -116,26 +116,6 @@ const server = http.createServer(function (request, response) {
             })
             break
         case "/confirm":
-            // selected_scans.forEach(function (scan) {
-            //     switch (query.software) {
-            //         case "dicomifier":
-            //             child_process.execSync(util.format('dicomifier nii -z "%s" %s', scan.path, tmp_bruker2bids))
-            //             break
-            //         case "dcm2niix":
-            //             break
-            //     }
-            //     child_process.execSync(util.format("bash scripts/bruker2bids.sh %s %s %s", query.software, scan.path, xxx))
-            // })
-
-            // switch (query.software) {
-            //     case "dicomifier":
-            //         child_process.execSync(util.format('dicomifier nii -z "%s" %s', scan.path, tmp_bruker2bids))
-            //         child_process.execSync(util.format('mv %s/', scan.path, tmp_bruker2bids))
-            //         break
-            //     case "dcm2niix":
-            //         break
-            // }
-
             /**
              * query:
              * 
@@ -213,11 +193,11 @@ function convert(updated_scans, query, output_dir) {
     let n = 0
     updated_scans.forEach(function (scan) {
         if (scan.bids_path) {
-            child_process.execSync(util.format('bash scripts/_%s.sh "%s" "%s" "%s" "%s"', query.software, scan.path, output_dir, scan.bids_path, tmp_bruker2bids))
             n++
             const last_back_slash = scan.bids_path.lastIndexOf("/")
             const bids_name = scan.bids_path.substr(last_back_slash + 1)
             console.log(util.format("%d/%d:%s", n, total, bids_name));
+            child_process.execSync(util.format('bash scripts/_%s.sh "%s" "%s" "%s" "%s"', query.software, scan.path, output_dir, scan.bids_path, tmp_bruker2bids))
         }
     })
     console.log("##########Convertion Ends###########");
