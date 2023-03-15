@@ -112,7 +112,7 @@ const server = http.createServer(function (request, response) {
                 response.writeHead(200, { "Content-Type": "text/plain" })
                 response.write(stdout)
                 response.end()
-                child_process.exec("rm -rf " + tmp_bruker2bids)
+                child_process.execSync("rm -rf " + tmp_bruker2bids)
             })
             break
         case "/confirm":
@@ -131,28 +131,18 @@ const server = http.createServer(function (request, response) {
             switch (query.output_type) {
                 case "zip":
                     convert(updated_scans, query, output_dir_default)
-                    console.log("##########Compression Begins###########");
-                    child_process.execSync("mkdir -p " + output_dir)
-                    child_process.exec(util.format('zip -r "%s"/output_bruker2bids.zip "%s"', output_dir, output_dir_default), function () {
-                        child_process.execSync("rm -rf " + output_dir_default)
-                        console.log("##########Compression Ends###########");
-                    })
+                    compress(output_dir,".zip")
                     break
                 case "tar.gz":
                     convert(updated_scans, query, output_dir_default)
-                    console.log("##########Compression Begins###########");
-                    child_process.execSync("mkdir -p " + output_dir)
-                    child_process.exec(util.format('tar -cf "%s"/output_bruker2bids.tar "%s" && pigz "%s"/output_bruker2bids.tar', output_dir, output_dir_default, output_dir), function () {
-                        child_process.execSync("rm -rf " + output_dir_default)
-                        console.log("##########Compression Ends###########");
-                    })
+                    compress(output_dir,".tar")
                     break
                 case "files":
                     convert(updated_scans, query, output_dir)
                     break
             }
-
-            child_process.exec("rm -rf " + tmp_bruker2bids)
+            child_process.execSync("rm -rf " + tmp_bruker2bids)
+            console.log("############# BIDS convertion done ###########");
             break
     }
 }).once('listening', function () {
@@ -201,4 +191,21 @@ function convert(updated_scans, query, output_dir) {
         }
     })
     console.log("##########Convertion Ends###########");
+}
+
+function compress(output_dir, format){
+    // format: .tar or .zip
+    console.log("##########Compression Begins###########");
+    child_process.execSync("mkdir -p " + output_dir)
+    const compressed_file=output_dir+"/output_bruker2bids_"+new Date().getTime()+format
+    switch(format){
+        case ".zip":
+            child_process.execSync(util.format('zip -r "%s" "%s"',compressed_file ,output_dir_default))
+            break
+        case ".tar":
+            child_process.execSync(util.format('tar -cf "%s" "%s" && pigz "%s"', compressed_file, output_dir_default, compressed_file))
+            break
+    }
+    child_process.execSync("rm -rf " + output_dir_default)
+    console.log("##########Compression Ends###########");
 }
