@@ -12,6 +12,7 @@ const store = reactive({
     software: "dcm2niix",
     output_dir:"",
     output_type:"zip",
+    reorientation_code:"-1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1",
     config:"", // json string
 
     bids_tree:"",    

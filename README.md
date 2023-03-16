@@ -21,6 +21,8 @@ conda create -n bruker2bids -c conda-forge [dcm2niix or dicomifier] nodejs
 		alias pigz=gzip
 		```
 - node.js
+- singularity
+- FSL singularity container
 - [dcm2niix](https://github.com/rordenlab/dcm2niix) or [dicomifier](https://github.com/lamyj/dicomifier/issues)
 	- bruker2bids supports both dcm2niix and dicomifier. dcm2niix converts DICOM into NIfTI. dicomifier can convert DICOM or bruker raw data into NIfTI. However, support with dicomifier isn't perfect. Sometimes dicomifier generate two NIfTI files, one from DICOM source, the other from bruker raw data. This will make the program crash. Generally speaking, start with dcm2niix if you don't know what to choose.
 # Quick start
@@ -44,5 +46,6 @@ function bruker2bids(){
 - zip or tar.gz the result with one click
 - automatic run label for scans with identical labels according to their chronological order
 - No interference between mutiple users
+- reorient images with one click
 # Demo
 - The author is kind of too lazy to prepare a video. Just try it. If you have got any question, open an issue. I'm more than glab to help you! If you like it, please give this repository a star! If you see many stars, that means you can trust this program!

@@ -122,6 +122,7 @@ const server = http.createServer(function (request, response) {
              * software
              * output_dir
              * output_type
+             * reorientation_code
              */
 
             response.writeHead(200, { "Content-Type": "text/plain" })
@@ -131,11 +132,11 @@ const server = http.createServer(function (request, response) {
             switch (query.output_type) {
                 case "zip":
                     convert(updated_scans, query, output_dir_default)
-                    compress(output_dir,".zip")
+                    compress(output_dir, ".zip")
                     break
                 case "tar.gz":
                     convert(updated_scans, query, output_dir_default)
-                    compress(output_dir,".tar")
+                    compress(output_dir, ".tar")
                     break
                 case "files":
                     convert(updated_scans, query, output_dir)
@@ -146,8 +147,10 @@ const server = http.createServer(function (request, response) {
             break
     }
 }).once('listening', function () {
-    console.log("Please run this command from your local computer to enable port forwarding");
-    console.log(util.format("ssh -L %d:localhost:%d -N nmrsu@%s\n", port, port, ip_address));
+    const username = child_process.execSync("whoami")
+    console.log("If you are using bruker2bids through SSH");
+    console.log("Please run this command on your local computer to enable port forwarding");
+    console.log(util.format("ssh -L %d:localhost:%d -N %s@%s\n", port, port, username, ip_address));
     console.log(util.format("bruker2bids is running at: http://localhost:%d", port))
 }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
@@ -179,7 +182,11 @@ function readFileCallback(response, data, content_type) {
 }
 
 function convert(updated_scans, query, output_dir) {
-    console.log("##########Convertion Begins###########");
+    let reorientation_info=""
+    if (query.reorientation_code != "NA") {
+        reorientation_info="(with reorientation)"
+    }
+    console.log("##########Convertion Begins"+reorientation_info+"###########");
     let n = 0
     updated_scans.forEach(function (scan) {
         if (scan.bids_path) {
@@ -188,19 +195,22 @@ function convert(updated_scans, query, output_dir) {
             const bids_name = scan.bids_path.substr(last_back_slash + 1)
             console.log(util.format("%d/%d:%s", n, total, bids_name));
             child_process.execSync(util.format('bash scripts/_%s.sh "%s" "%s" "%s" "%s"', query.software, scan.path, output_dir, scan.bids_path, tmp_bruker2bids))
+            if (query.reorientation_code != "NA") {
+                child_process.execSync(util.format('bash scripts/reorient.sh "%s/%s.nii.gz" "%s"',output_dir,scan.bids_path,query.reorientation_code))
+            }
         }
     })
-    console.log("##########Convertion Ends###########");
+    console.log("##########Convertion Ends"+reorientation_info+"###########");
 }
 
-function compress(output_dir, format){
+function compress(output_dir, format) {
     // format: .tar or .zip
     console.log("##########Compression Begins###########");
     child_process.execSync("mkdir -p " + output_dir)
-    const compressed_file=output_dir+"/output_bruker2bids_"+new Date().getTime()+format
-    switch(format){
+    const compressed_file = output_dir + "/output_bruker2bids_" + new Date().getTime() + format
+    switch (format) {
         case ".zip":
-            child_process.execSync(util.format('zip -r "%s" "%s"',compressed_file ,output_dir_default))
+            child_process.execSync(util.format('zip -r "%s" "%s"', compressed_file, output_dir_default))
             break
         case ".tar":
             child_process.execSync(util.format('tar -cf "%s" "%s" && pigz "%s"', compressed_file, output_dir_default, compressed_file))

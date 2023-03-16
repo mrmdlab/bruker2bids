@@ -72,7 +72,8 @@ createApp({
             params: {
               software: this.store.software,
               output_dir: this.store.output_dir,
-              output_type: this.store.output_type
+              output_type: this.store.output_type,
+              reorientation_code:this.store.reorientation_code
             }
           }).then(res => {
             alert("BIDS conversion begins! Progress is displayed in server console")
