@@ -147,7 +147,7 @@ const server = http.createServer(function (request, response) {
             break
     }
 }).once('listening', function () {
-    const username = child_process.execSync("whoami")
+    const username = (child_process.execSync("whoami")+"").trim()
     console.log("If you are using bruker2bids through SSH");
     console.log("Please run this command on your local computer to enable port forwarding");
     console.log(util.format("ssh -L %d:localhost:%d -N %s@%s\n", port, port, username, ip_address));
