@@ -106,6 +106,10 @@ const server = http.createServer(function (request, response) {
                     total++
                     child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".json")
                     child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".nii.gz")
+		    if (scan.bids_path.endsWith("dwi")){
+		      child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".bvec")
+		      child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".bval")
+		    }
                 }
             })
             child_process.exec("tree " + tmp_bruker2bids, function (err, stdout, stderr) {

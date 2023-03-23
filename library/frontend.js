@@ -44,7 +44,7 @@ createApp({
       this.store.data_list = data.data_list
 
       const time = new Date()
-      this.store.output_dir = "output_bruker2bids_" + time.Format("yyyyMMddhhmmss")
+      this.store.output_dir = "~/Downloads/output_bruker2bids_" + time.Format("yyyyMMddhhmmss")
     })
   },
   methods:

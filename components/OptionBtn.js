@@ -3,7 +3,7 @@ export default {
     data() {
         return {
             dialog: false,
-            reorientation_option: "SIGMA,Allen,Dsurque",
+            reorientation_option: "none",
             disable_code_editing:true,
             store,
         }

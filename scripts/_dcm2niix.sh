@@ -15,4 +15,4 @@ mv $tmp_bruker2bids/1.nii.gz $output_dir/$bids_path.nii.gz
 endswith(){
     echo "$1" | grep -q -E '\'"$2"'$'
 }
-endswith $bids_path dwi && python scripts/_dwi.py $methodfile $output_dir/$bids_path
+endswith $bids_path dwi && python scripts/_dwi.py $methodfile $output_dir/$bids_path || echo 
