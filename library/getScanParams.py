@@ -70,7 +70,9 @@ for E_number in os.listdir(data_folder):
     scan_folder = data_folder+"/"+E_number  # absolute path to an E number folder
     if os.path.isdir(scan_folder) and E_number != "AdjResult":
         result = {"path": scan_folder}
-        if os.path.isfile(data_folder+"/"+E_number+"/fid"):
+        if os.path.isfile(data_folder+"/"+E_number+"/fid") \
+         and os.path.isfile(data_folder+"/"+E_number+"/visu_pars") \
+         and os.path.isdir(data_folder+"/"+E_number+"/pdata/1/dicom"):
             result["disabled"] = False  # normal
             visu_pars_path = data_folder+"/"+E_number+"/visu_pars"
             # there are two slightly different visu_pars files, but this one doesn't always exist
