@@ -34,7 +34,10 @@ export default {
             this.scan_params = JSON.parse(JSON.stringify(scan))
             delete this.scan_params["disabled"]
             delete this.scan_params["path"]
-            // delete this.scan_params["scan_name"]
+            delete this.scan_params["scan_name"]
+            delete this.scan_params["protocol_name"]
+            delete this.scan_params["E_number"]
+            
         },
         emptyScanParams() {
             this.scan_params = {}
