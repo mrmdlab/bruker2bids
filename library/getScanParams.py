@@ -22,7 +22,7 @@ def addUnits(result):
     for key in result.keys():
         if key in ["TE","TR"]:
             try:
-                result[key]=f'{round(float(result[key]))} ms'
+                result[key]=f'{round(float(result[key]),1)} ms'
             except Exception:
                 pass
         elif key == "date_time":
@@ -32,8 +32,8 @@ def addUnits(result):
                 result["scan_duration"] = f'{round(float(result["scan_duration"])/60000,1)} min'
             except Exception:
                 pass
-        elif key == "slice_thickness":
-            result["slice_thickness"]+=" mm"
+        elif key in ["slice_thickness","slice_gap"]:
+            result[key]+=" mm"
 
 
 # path to data folder
@@ -50,6 +50,8 @@ params = {
     "subject": "##$VisuSubjectId=",
     "session": "##$VisuStudyId=",
     "slice_thickness": "##$VisuCoreFrameThickness=",  # mm
+    "image_size":"##$VisuAcqSize=",
+    "slice_number":"##$VisuCoreFrameCount=",
     "ETL": "##$VisuAcqEchoTrainLength=",
     "TR": "##$VisuAcqRepetitionTime=",  # ms
     "TE": "##$VisuAcqEchoTime=",  # ms
@@ -58,7 +60,6 @@ params = {
     "date_time": "##$VisuAcqDate=",  # need converting to time object
     "averages": "##$VisuAcqNumberOfAverages=",
     "E_number":"##$VisuExperimentNumber=",
-    # "image_size": "##$VisuAcqSize="
 }
 
 # for acqp
@@ -68,7 +69,8 @@ uncomplete_params = {
 
 # for method
 additional_params = {
-    "SliceOrient":"##$PVM_SPackArrSliceOrient=( 1 )"
+    "SliceOrient":"##$PVM_SPackArrSliceOrient=",    
+    "slice_gap": "##$PVM_SPackArrSliceGap="  # mm
 }
 
 for E_number in os.listdir(data_folder):
