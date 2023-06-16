@@ -10,11 +10,8 @@
 import numpy as np
 import sys
 
-sform=sys.argv[1]
-transformation=sys.argv[2]
-
-sform=sform.split()
+sform=sys.argv[1].split()
+transformation=sys.argv[2].split()
 sform=np.array(sform).reshape((4,4)).astype(float)
-transformation=transformation.split()
 transformation=np.array(transformation).reshape((4,4)).astype(float)
 print(np.array2string(np.matmul(transformation,sform).flatten())[1:-1])

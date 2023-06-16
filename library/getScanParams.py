@@ -17,6 +17,8 @@ def getScanParams(file_path, params, result):
                         # the current line is the parameter
                         result[key] = line[len(value):].replace("\n", "")
             line = f.readline()
+
+def addUnits(result):
     for key in result.keys():
         if key in ["TE","TR"]:
             try:
@@ -63,21 +65,30 @@ params = {
 uncomplete_params = {
     "scan_name": "##$ACQ_scan_name="
 }
+
+# for method
+additional_params = {
+    "SliceOrient":"##$PVM_SPackArrSliceOrient=( 1 )"
+}
+
 for E_number in os.listdir(data_folder):
     # 1.make sure it's a folder
-    # 2.make sure it has fid file. otherwise, the scan is uncompleted or not started
+    # 2.make sure it has dicom folder and file `visu_pars`
     # 3.read scan name from the acqp file
     scan_folder = data_folder+"/"+E_number  # absolute path to an E number folder
     if os.path.isdir(scan_folder) and E_number != "AdjResult":
         result = {"path": scan_folder}
-        if os.path.isfile(data_folder+"/"+E_number+"/fid") \
-         and os.path.isfile(data_folder+"/"+E_number+"/visu_pars") \
-         and os.path.isdir(data_folder+"/"+E_number+"/pdata/1/dicom"):
+        visu_pars_path = data_folder+"/"+E_number+"/visu_pars"
+        dicom_dir = data_folder+"/"+E_number+"/pdata/1/dicom"
+        method_path = data_folder+"/"+E_number+"/method"
+        if os.path.isfile(visu_pars_path) and os.path.isdir(dicom_dir):
             result["disabled"] = False  # normal
-            visu_pars_path = data_folder+"/"+E_number+"/visu_pars"
+
             # there are two slightly different visu_pars files, but this one doesn't always exist
             # visu_pars_path = data_folder+"/"+E_number+"/pdata/1/visu_pars" 
             getScanParams(visu_pars_path, params, result)
+            getScanParams(method_path, additional_params, result)
+            addUnits(result)
             # if "scan_name" in result.keys():
             #     # scan name from visu_pars doesn't contain E number
             #     result["scan_name"] += f" (E{E_number})"

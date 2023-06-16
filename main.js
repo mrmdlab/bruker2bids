@@ -164,7 +164,6 @@ const server = http.createServer(function (request, response) {
 })
     .listen(port)
 
-
 // utils
 function getIPAdress() {
     var interfaces = require('os').networkInterfaces();
