@@ -1,7 +1,7 @@
 # Installation
 ```sh
 git clone https://github.com/Microdeep-ZL/bruker2bids.git
-conda create -n bruker2bids -c conda-forge [dcm2niix or dicomifier] nodejs
+conda create -n bruker2bids -c conda-forge dcm2niix nodejs
 ```
 # dependecies
 - pigz, tree, zip
@@ -23,8 +23,7 @@ conda create -n bruker2bids -c conda-forge [dcm2niix or dicomifier] nodejs
 - node.js
 - singularity
 - FSL singularity container
-- [dcm2niix](https://github.com/rordenlab/dcm2niix) or [dicomifier](https://github.com/lamyj/dicomifier/issues)
-	- bruker2bids supports both dcm2niix and dicomifier. dcm2niix converts DICOM into NIfTI. dicomifier can convert DICOM or bruker raw data into NIfTI. However, support with dicomifier isn't perfect. Sometimes dicomifier generate two NIfTI files, one from DICOM source, the other from bruker raw data. This will make the program crash. Generally speaking, start with dcm2niix if you don't know what to choose.
+- [dcm2niix](https://github.com/rordenlab/dcm2niix)
 # Quick start
 ```sh
 # add this function to your ~/.bashrc

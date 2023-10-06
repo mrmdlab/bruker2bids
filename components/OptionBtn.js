@@ -38,21 +38,6 @@ export default {
 
                 <v-card-text>
                     <v-row class="d-flex align-center">
-                        <!-- software -->
-                        <v-col cols="3" class="py-0">
-                            <p class="font-weight-bold">software</p>
-                        </v-col>
-                        <v-col cols="9" class="py-0">
-                            <v-radio-group inline class="d-flex justify-left">
-                                <input type="radio" name="software" id="dicomifier" value="dicomifier"
-                                    v-model="store.software">
-                                <label for="dicomifier">dicomifier</label>
-                                <input class="ml-2" type="radio" name="software" id="dcm2niix" value="dcm2niix"
-                                    v-model="store.software">
-                                <label for="dcm2niix">dcm2niix</label>
-                            </v-radio-group>
-                        </v-col>
-
                         <!-- output type -->
                         <v-col cols="3" class="py-0">
                             <p class="font-weight-bold">output type</p>

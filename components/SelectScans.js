@@ -8,7 +8,10 @@ export default {
         }
     },
     mounted() {
-        axios.get("/data?task=scan_params&data_folders=" + JSON.stringify(this.store.data_folders)).then(res => {
+        axios.post("/data",{
+            task:"scan_params",
+            data_folders:JSON.stringify(this.store.data_folders)
+        }).then(res => {
             const data = res.data
             // console.log(data);
             this.scans_all = data

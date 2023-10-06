@@ -37,7 +37,9 @@ createApp({
     }
   },
   mounted() {
-    axios.get("/data?task=data_list").then((res) => {
+    axios.post("/data",{
+      task:"data_list"
+    }).then((res) => {
       const data = res.data
       // console.log(data);
       this.store.data_directory = data.data_directory
@@ -60,21 +62,22 @@ createApp({
           this.$router.push("/preview")
           this.prompt = ""
           this.store.next_step = "confirm"
-          const request = "/preview?config=" + this.store.config + "&selected_scans=" + this.resolveSelectedScans(this.store.selected_scans)
-          axios.get(request).then(res => {
+          // const request = "/preview?config=" + this.store.config + "&selected_scans=" + this.resolveSelectedScans(this.store.selected_scans)
+          axios.post("/preview",{
+            config:this.store.config,
+            selected_scans:this.resolveSelectedScans(this.store.selected_scans)
+          }).then(res => {
             const data = res.data
             this.store.bids_tree = data
             // console.log(data);
           })
           break
         case "confirm":
-          axios.get("/confirm", {
-            params: {
-              software: this.store.software,
-              output_dir: this.store.output_dir,
-              output_type: this.store.output_type,
-              reorientation_code:this.store.reorientation_code
-            }
+          axios.post("/confirm", {
+            software: this.store.software,
+            output_dir: this.store.output_dir,
+            output_type: this.store.output_type,
+            reorientation_code:this.store.reorientation_code
           }).then(res => {
             alert("BIDS conversion begins! Progress is displayed in server console")
           })
