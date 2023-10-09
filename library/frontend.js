@@ -33,6 +33,7 @@ createApp({
     return {
       store,
       prompt: "Please select data folders",
+      all:false // true if all available scans are selected
 
     }
   },
@@ -102,6 +103,23 @@ createApp({
       return JSON.stringify(select_scans.map(function (scan) {
         return JSON.parse(scan)
       }))
+    },
+    select_all(){
+      if(this.all){
+        store.selected_scans=[]
+      }
+      else{
+        //select all
+        store.selected_scans=[]
+        for (const folder in store.scans_all) {
+          for (const scan of store.scans_all[folder]) {
+            if (!scan.disabled) {
+              store.selected_scans.push(JSON.stringify(scan))
+            }
+          }
+        }
+      }
+      this.all=!this.all
     }
   }
 }).use(vuetify).use(router).mount('#app')

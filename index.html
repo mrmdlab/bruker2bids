@@ -23,6 +23,7 @@
 
         <option-btn></option-btn>
         <config-btn class="ml-4"></config-btn>
+        <v-btn color="primary" size="small" @click="select_all" :disabled="$route.path!='/select_scans'" class="ml-4">all</v-btn>
         <v-btn color="primary" size="small" @click="back" class="ml-4">back</v-btn>
         <v-btn color="primary" size="small" @click="next" class="ml-4">{{store.next_step}}</v-btn>
       </div>

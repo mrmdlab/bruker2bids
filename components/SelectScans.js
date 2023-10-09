@@ -3,7 +3,6 @@ export default {
     data() {
         return {
             store,
-            scans_all: {},
             scan_params: {}
         }
     },
@@ -14,7 +13,7 @@ export default {
         }).then(res => {
             const data = res.data
             // console.log(data);
-            this.scans_all = data
+            store.scans_all = data
         })
     },
     computed: {
@@ -28,7 +27,7 @@ export default {
         },
         scans() {
             if (this.store.selected_folder.length > 0) {
-                return this.scans_all[this.store.selected_folder[0]]
+                return store.scans_all[store.selected_folder[0]]
             }
         }
     },

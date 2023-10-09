@@ -6,6 +6,7 @@ const store = reactive({
     data_directory: "",
     next_step: "next",
     
+    scans_all:{},
     selected_folder: [], // only one element
 
     selected_scans:[], // list of scans, each scan is an object derived from `getScanParams.py`
