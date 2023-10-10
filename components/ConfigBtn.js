@@ -1,20 +1,56 @@
 import store from "/file?path=library/store.js"
 export default {
+  template: await axios.get("/file",{
+    params:{
+        path:"components/ConfigBtn.html",
+        type:"text/plain"
+    }
+}).then(res=>(res.data)),
   data() {
     return {
       store,
       dialog: false,
-      config_edited:""
+      SL_dialog:false,
+      config_edited:"",
+      config_list:[], // eg ["config_default","custom_config"]
+      selected_config:["config_default"] // only one element
     }
   },
   mounted() {
     axios.get("/file?path=configs/config_default.json", { responseType: 'text' }).then(res => {
-      const data = res.data
-      this.store.config = data
-    })
+      store.config = res.data
+  })
+  },
+  computed:{
+    configs(){
+      return this.config_list.map(function(filename){
+        return {
+          title: filename,
+          value: filename
+        }
+      })
+    },
+    disableDelete(){
+      if(this.selected_config[0]=="config_default"||!this.config_list.includes(this.selected_config[0])){
+        return true
+      }
+      return false
+    },
+    disableSave(){
+      if(this.selected_config[0]==""){
+        return true
+      }
+      return false
+    },
+    disableLoad(){
+      if(!this.config_list.includes(this.selected_config[0])){
+        return true
+      }
+      return false
+    }
   },
   methods:{
-    save(){
+    done(){
       this.dialog = false
       this.store.config=this.config_edited
       if (this.store.next_step=="confirm"){
@@ -23,45 +59,41 @@ export default {
     },
     openConfig(){
       this.config_edited=this.store.config
+    },
+    refreshConfigList(){
+      axios.post("/data",{
+        task:"config_list"
+      }).then(res=>{
+        this.config_list=res.data.config_list.map(function(filename){
+          return filename.replace(".json","")
+        })
+        for (let i = 0; i < this.config_list.length; i++) {
+          if(this.config_list[i].startsWith("config_tmp")){
+            this.config_list.splice(i,1)
+          }          
+        }
+      })
+    },
+    deleteConfig(){
+      axios.post("/delete",{
+        path:"configs/"+this.selected_config[0]+".json"
+      }).then(()=>{
+        this.refreshConfigList()
+      })
+    },
+    save(){
+      axios.post("/write",{
+        config:this.config_edited,
+        name:this.selected_config[0]
+      }).then(()=>{
+        this.refreshConfigList()
+      })
+    },
+    load(){
+      this.SL_dialog = false
+      axios.get("/file?path=configs/"+this.selected_config[0]+".json", { responseType: 'text' }).then(res => {
+        this.config_edited = res.data
+      })
     }
-    // TODO
-    // saveAs(){
-
-    // },
-  },
-  template:
-`
-<div class="text-center">
-    <v-btn color="primary" size="small" @click="openConfig">
-        config
-        <v-dialog v-model="dialog" activator="parent" fullscreen>
-            <v-card>
-                <v-toolbar dark color="primary">
-                    <v-toolbar-title>config</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-toolbar-items>
-                        <v-btn variant="text" @click="dialog = false">
-                            Cancel
-                        </v-btn>
-
-                        <!--
-                        <v-btn variant="text" @click="saveAs">
-                            Save As
-                        </v-btn>
-                        -->
-
-                        <v-btn variant="text" @click="save">
-                            Save
-                        </v-btn>
-                    </v-toolbar-items>
-                </v-toolbar>
-
-                <v-card-text>
-                    <v-textarea auto-grow v-model="config_edited"></v-textarea>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-    </v-btn>
-</div>
-`
+  }
 }

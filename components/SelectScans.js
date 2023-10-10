@@ -1,5 +1,11 @@
 import store from "/file?path=library/store.js"
 export default {
+    template:await axios.get("/file",{
+        params:{
+            path:"components/SelectScans.html",
+            type:"text/plain"
+        }
+    }).then(res=>(res.data)),
     data() {
         return {
             store,
@@ -54,44 +60,5 @@ export default {
                 }
             }
         }
-    },
-    template:
-        `
-<v-row>
-    <!-- data folders -->
-    <v-col cols="6">
-        <v-card title="data folders" class="overflow-auto" height="200">
-            <v-list density="compact" :items="data_folders" v-model:selected="store.selected_folder" active-color="primary">
-            </v-list>
-        </v-card>
-    </v-col>
-
-    <!-- scans -->
-    <v-col cols="6">
-        <v-card title="scans" class="overflow-auto" height="200">
-            <v-list density="compact" select-strategy="independent" v-model:selected="store.selected_scans"
-                active-color="primary">
-                <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans" :key="scan.path" :value="JSON.stringify(scan)"
-                    :disabled="scan.disabled">
-                    <v-list-item-title>{{scan_name(scan)}}</v-list-item-title>
-                    <v-list-item-subtitle>{{scan.protocol_name}}</v-list-item-subtitle>
-                </v-list-item>
-            </v-list>
-        </v-card>
-    </v-col>
-
-    <!-- scan parameters -->
-    <v-col>
-        <v-card title="scan parameters" height="250">
-            <v-container>
-                <v-row class="d-flex justify-left">
-                    <v-col cols="3" v-for="(value, key) in scan_params" class="py-0">
-                        {{key}}: {{value}}
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-card>
-    </v-col>
-</v-row>
-`
+    }
 }

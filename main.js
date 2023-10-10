@@ -28,8 +28,12 @@ const server = http.createServer(function (request, response) {
                 })
                 break
             case "/file":
+                let type="text/javascript"
+                if(query.type){
+                    type=query.type
+                }
                 fs.readFile(query.path, function (err, data) {
-                    readFileCallback(response, data, "text/javascript")
+                    readFileCallback(response, data, type)
                 })
                 break
         }
@@ -47,6 +51,15 @@ const server = http.createServer(function (request, response) {
                 case "/data":
                     response.writeHead(200, { "Content-Type": "application/json" })
                     switch (query.task) {
+                        case "config_list":
+                            fs.readdir("configs", function (err, files) {
+                                const result = {
+                                    config_list:files
+                                }
+                                response.write(JSON.stringify(result))
+                                response.end()
+                            })
+                            break
                         case "data_list":
                             fs.readdir(data_directory, function (err, files) {
                                 const data_list = files.reverse()
@@ -73,6 +86,21 @@ const server = http.createServer(function (request, response) {
                             response.end()
                             break
                     }
+                    break
+                case "/write":
+                    /**
+                     * body:
+                     * config
+                     * name
+                     */
+                    fs.writeFileSync("configs/" + query.name + ".json", query.config)
+                    response.writeHead(200, { "Content-Type": "text/plain" })
+                    response.end()
+                    break
+                case "/delete":
+                    fs.unlinkSync(query.path)
+                    response.writeHead(200, { "Content-Type": "text/plain" })
+                    response.end()
                     break
                 case "/preview":
                     /**
