@@ -6,6 +6,7 @@ import store from "/file?path=library/store.js"
 
 import OptionBtn from "/file?path=components/OptionBtn.js"
 import ConfigBtn from "/file?path=components/ConfigBtn.js"
+import AutoBtn from "/file?path=components/AutoBtn.js"
 
 Date.prototype.Format = function (fmt) { // author: meizz
   var o = {
@@ -27,7 +28,8 @@ Date.prototype.Format = function (fmt) { // author: meizz
 createApp({
   components: {
     OptionBtn,
-    ConfigBtn
+    ConfigBtn,
+    AutoBtn
   },
   data() {
     return {
@@ -45,6 +47,8 @@ createApp({
       // console.log(data);
       this.store.data_directory = data.data_directory
       this.store.data_list = data.data_list
+      store.port = data.port
+      store.is_auto_bids_running=data.is_auto_bids_running
 
       const time = new Date()
       this.store.output_dir = "~/Downloads/output_bruker2bids_" + time.Format("yyyyMMddhhmmss")
@@ -63,10 +67,9 @@ createApp({
           this.$router.push("/preview")
           this.prompt = ""
           this.store.next_step = "confirm"
-          // const request = "/preview?config=" + this.store.config + "&selected_scans=" + this.resolveSelectedScans(this.store.selected_scans)
           axios.post("/preview",{
             config:this.store.config,
-            selected_scans:this.resolveSelectedScans(this.store.selected_scans)
+            selected_scans:JSON.stringify(store.selected_scans)
           }).then(res => {
             const data = res.data
             this.store.bids_tree = data
@@ -99,11 +102,6 @@ createApp({
           break
       }
     },
-    resolveSelectedScans(select_scans) {
-      return JSON.stringify(select_scans.map(function (scan) {
-        return JSON.parse(scan)
-      }))
-    },
     select_all(){
       if(this.all){
         store.selected_scans=[]
@@ -114,7 +112,7 @@ createApp({
         for (const folder in store.scans_all) {
           for (const scan of store.scans_all[folder]) {
             if (!scan.disabled) {
-              store.selected_scans.push(JSON.stringify(scan))
+              store.selected_scans.push(scan)
             }
           }
         }

@@ -1,45 +1,28 @@
 {
 	"descriptions": [
 		{
-			"dataType": "func",
-			"modalityLabel": "bold",
-			"customLabels": "task-rest_acq-geEPI",
+			"dataType": "anat",
+			"modalityLabel": "T2w",
+			"customLabels": "acq-Coronal",
 			"criteria": {
-				"scan_name": ["*bold*","*fMRI*"]
+				"scan_name": ["*COR*"]
 			}
 		},
 		{
 			"dataType": "anat",
 			"modalityLabel": "T2w",
-			"customLabels": "acq-TurboRARE",
+			"customLabels": "acq-Saggital",
 			"criteria": {
-				"scan_name": ["*T2*","*RARE*"]
+				"scan_name": ["*SAG*"]
 			}
 		},
 		{
 			"dataType": "anat",
-			"modalityLabel": "T1w",
-			"customLabels": "acq-FLASH",
+			"modalityLabel": "T2w",
+			"customLabels": "acq-3D",
 			"criteria": {
-				"scan_name": ["*marker*","*T1*","*FLASH*"]
-			}
-		},
-		{
-			"dataType": "dwi",
-			"modalityLabel": "dwi",
-			"customLabels": "acq-geEPItopup",
-			"criteria": {
-				"scan_name": ["*topup*"]
-			}
-		},
-		{
-			"dataType": "dwi",
-			"modalityLabel": "dwi",
-			"customLabels": "acq-geEPI",
-			"criteria": {
-				"scan_name": ["*dwi*","*dti*"]
+				"scan_name": ["*3D*"]
 			}
 		}
-
 	]
 }

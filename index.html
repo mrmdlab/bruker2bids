@@ -5,6 +5,12 @@
   <title>bruker2bids</title>
   <link rel="icon" href="https://api.iconify.design/mingcute:transformation-fill.svg">
   <link href="https://cdn.jsdelivr.net/npm/vuetify@3.1.6/dist/vuetify.min.css" rel="stylesheet">
+  <style>
+    .description {
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
@@ -21,11 +27,12 @@
         <span>{{prompt}}</span>
         <v-spacer></v-spacer>
 
-        <option-btn></option-btn>
+        <auto-btn></auto-btn>
+        <option-btn class="ml-4"></option-btn>
         <config-btn class="ml-4"></config-btn>
         <v-btn color="primary" size="small" @click="select_all" :disabled="$route.path!='/select_scans'" class="ml-4">all</v-btn>
         <v-btn color="primary" size="small" @click="back" class="ml-4">back</v-btn>
-        <v-btn color="primary" size="small" @click="next" class="ml-4">{{store.next_step}}</v-btn>
+        <v-btn color="primary" size="small" @click="next" :disabled="store.is_auto_bids_running" class="ml-4">{{store.next_step}}</v-btn>
       </div>
       <br>
       <router-view></router-view>

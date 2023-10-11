@@ -40,6 +40,7 @@ function bruker2bids(){
 ```
 # Features
 - **straightforward GUI based on web**
+- **Automated BIDS conversion as you scan**
 - help you enable port forwarding when using bruker2bids through SSH
 - wildcards and list support in criteria
 - immediate preview of BIDS result
@@ -48,6 +49,6 @@ function bruker2bids(){
 - automatic run label for scans with identical labels according to their chronological order
 - No interference between mutiple users
 - reorient images with one click
-- save, load and delete your own config files 
+- save, load and delete your own config files
 # Demo
 - The author is kind of too lazy to prepare a video. Just try it. If you have got any question, open an issue. I'm more than glab to help you! If you like it, please give this repository a star! If you see many stars, that means you can trust this program!

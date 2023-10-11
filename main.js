@@ -13,6 +13,11 @@ let total = 0 // for progress display
 let config_tmp = ""
 let tmp_bruker2bids = ""
 let output_dir_default = ""
+let delay
+let is_auto_bids_running = false
+let auto_bids_begin=0
+let auto_bids_record={}
+let auto_bids_query={}
 
 const server = http.createServer(function (request, response) {
     const req_url = url.parse(request.url, true)
@@ -35,6 +40,42 @@ const server = http.createServer(function (request, response) {
                 fs.readFile(query.path, function (err, data) {
                     readFileCallback(response, data, type)
                 })
+                break
+            case "/auto_bids":
+                /**
+                 * query:
+                 * 
+                 * delay
+                 * config
+                 * software
+                 * output_dir
+                 * output_type
+                 * reorientation_code
+                 */
+                switch(query.task){
+                    case "start":
+                        delay=Number(query.delay)*1000
+                        auto_bids_begin = new Date().getTime()
+                        // test
+                        // auto_bids_begin = 1696830659882 //2023-10-09T05:50:59.882Z
+
+                        auto_bids_query=query
+                        auto_bids_record={}
+                        is_auto_bids_running=true
+                        console.log("########Automated BIDS conversion begins########");
+                        break
+                    case "stop":
+                        is_auto_bids_running=false
+                        console.log("########Automated BIDS conversion ends########");
+                        break
+                    default:
+                        console.log("###Checking###");
+                        setTimeout(function(){
+                            check_scans()
+                        },delay)
+                }
+                response.writeHead(200, { "Content-Type": "text/plain" });
+                response.end();
                 break
         }
     } else if (request.method === 'POST') {
@@ -65,14 +106,16 @@ const server = http.createServer(function (request, response) {
                                 const data_list = files.reverse()
                                 const result = {
                                     data_list,
-                                    data_directory
+                                    data_directory,
+                                    port,
+                                    is_auto_bids_running
                                 }
                                 response.write(JSON.stringify(result))
                                 response.end()
                             })
                             break
                         case "scan_params":
-                            /*
+                            /**
                             * data_folders: list of data folder names
                             */
                             const result = {}
@@ -145,6 +188,30 @@ const server = http.createServer(function (request, response) {
                                 child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".bvec")
                                 child_process.execSync("mkdir -p " + tmp_bruker2bids + "/" + scan.bids_path + ".bval")
                             }
+
+                            // for automated bids conversion
+                            if(is_auto_bids_running){
+                                if(auto_bids_record[scan.path]==scan.bids_path){
+                                    //skip
+                                    total--
+                                    scan.bids_path=undefined
+                                }else if(auto_bids_record[scan.path]==undefined){
+                                    //convert                                    
+                                    auto_bids_record[scan.path]=scan.bids_path
+                                }else{
+                                    //solve run_1, run_2 problem
+                                    //rename and skip
+                                    //FIXME what if it has been opened in ITK-SNAP?
+                                    const old_bids_path=auto_bids_query.output_dir+"/"+auto_bids_record[scan.path]
+                                    const new_bids_path=auto_bids_query.output_dir+"/"+scan.bids_path
+                                    rename(old_bids_path,new_bids_path)
+                                    
+                                    auto_bids_record[scan.path]=scan.bids_path
+                                    total--
+                                    scan.bids_path=undefined
+                                }
+                            }
+
                         }
                     })
                     child_process.exec("tree " + tmp_bruker2bids, function (err, stdout, stderr) {
@@ -166,7 +233,11 @@ const server = http.createServer(function (request, response) {
 
                     response.writeHead(200, { "Content-Type": "text/plain" })
                     response.end()
-                    const output_dir = query.output_dir.replace("~", "$HOME")
+                    if(total==0){
+                        console.log("###Found nothing to convert###");
+                        break
+                    }
+                    const output_dir = query.output_dir.replace("~",process.env.HOME)
 
                     switch (query.output_type) {
                         case "zip":
@@ -258,4 +329,79 @@ function compress(output_dir, format) {
     }
     child_process.execSync("rm -rf " + output_dir_default)
     console.log("##########Compression Ends###########");
+}
+
+function check_scans(){
+    const selected_scans=[]
+    fs.readdir(data_directory, function (err, folders) {
+        for (const folder of folders) {
+            const stats = fs.statSync(data_directory+"/"+folder)
+            const lastModified = stats.mtime.getTime()
+            // select studies whose last modification time is later than the begin time of AutoBIDS
+            if(lastModified>auto_bids_begin){
+                const data_folder = data_directory + "/" + folder
+                const stdout = child_process.execSync("python library/getScanParams.py " + data_folder)
+                const scans = JSON.parse(stdout)
+
+                for (const scan of scans) {
+                    if (!scan.disabled) {
+                        selected_scans.push(scan)
+                    }
+                }
+            }
+        }
+
+        // Most operations in the server side are Sync hence no need to worry about callback
+        postRequest("/preview",{
+            config: auto_bids_query.config,
+            selected_scans:JSON.stringify(selected_scans)
+        })
+
+        postRequest("/confirm", {
+            software: auto_bids_query.software,
+            output_dir: auto_bids_query.output_dir,
+            output_type: auto_bids_query.output_type,
+            reorientation_code: auto_bids_query.reorientation_code
+        })
+    })
+}
+
+function postRequest(path, data){
+    data = JSON.stringify(data);
+    
+    const options = {
+        hostname: 'localhost',
+        port,
+        path,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    };
+    
+    const req = http.request(options);
+    req.write(data);
+    req.end();
+}
+
+function rename(oldpath, newpath) {
+    const ext=[]
+
+    oldpath=oldpath.replace("~",process.env.HOME)
+    newpath=newpath.replace("~",process.env.HOME)
+    const last_back_slash = oldpath.lastIndexOf("/")
+    const folder=oldpath.substr(0,last_back_slash)
+    const oldname = oldpath.substr(last_back_slash + 1)
+    fs.readdir(folder, function (err, files) {
+        files.forEach(file => {
+            if(file.startsWith(oldname)){
+                ext.push(file.substr(oldname.length)) // .nii.gz .nii .bval .bvec .json
+            }
+        });
+    })
+
+    ext.forEach(e=>{
+        fs.rename(oldpath+e,newpath+e)
+    })
 }

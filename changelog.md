@@ -3,11 +3,17 @@
 - SelectScan.vue to be async
 - adapt to different screen size
 - after deselecting a study folder, any relevant scans should also be removed
-- automatic BISD conversion
-    - 为了在扫描时可以直接出BIDS结果，可以每隔5秒检测一下有没有日期时间比“已选中的study中最老的”还要更新的study，全选其scan，增量转化（即只转化新增的，维护一个哈希表，如果不存在则转换，否则跳过）
 ## changelog
-- save, load and delete config files
-- separate the template of Vue Component into an HTML file
-- abandon dicomifier
-- get to post
-- select all and deselect all for scans
+- 0.2.0
+    - automatic BISD conversion
+        - run a macro as a post scan activity to send a GET request to bruker2bids server. When such a request is received, check for new DICOM folders and convert to BIDS as per the specified config and options
+        - run1, run2 problem
+        - delay time for DICOM conversion to finish
+        - manual check
+        - output type must be and is automatically "files"
+        - disable confirm
+    - save, load and delete config files
+    - separate the template of Vue Component into an HTML file
+    - abandon dicomifier
+    - get to post
+    - select all and deselect all for scans
