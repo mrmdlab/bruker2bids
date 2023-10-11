@@ -19,9 +19,11 @@
                                     <v-card-title class="text-h5">
                                         Save/Load
                                     </v-card-title>
-                                    <v-card-text>
+                                    <v-card-text class="overflow-auto" >
                                         <v-list :items="configs" v-model:selected="selected_config" density="compact" select-strategy='single-independent' active-color="primary">
                                         </v-list>
+                                    </v-card-text>
+                                    <v-card-text>
                                         <v-text-field label="config" v-model="selected_config[0]" variant="outlined"></v-text-field>
                                     </v-card-text>
                                     <v-card-actions>
