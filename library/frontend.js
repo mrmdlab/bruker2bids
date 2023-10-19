@@ -69,7 +69,7 @@ createApp({
           this.store.next_step = "confirm"
           axios.post("/preview",{
             config:this.store.config,
-            selected_scans:JSON.stringify(store.selected_scans)
+            selected_scans:this.resolveSelectedScans(store.selected_scans)
           }).then(res => {
             const data = res.data
             this.store.bids_tree = data
@@ -101,6 +101,11 @@ createApp({
           this.store.next_step = "next"
           break
       }
+    },    
+    resolveSelectedScans(select_scans) {
+      return JSON.stringify(select_scans.map(function (scan) {
+        return JSON.parse(scan)
+      }))
     },
     select_all(){
       if(this.all){

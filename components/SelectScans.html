@@ -14,7 +14,7 @@
             <v-list density="compact" select-strategy="independent" v-model:selected="store.selected_scans"
                 active-color="primary">
                 <v-list-item @mouseover="displayScanParams(scan)" @mouseleave="emptyScanParams" v-for="scan in scans"
-                    :key="scan.path" :value="scan" :disabled="scan.disabled">
+                    :key="scan.path" :value="JSON.stringify(scan)" :disabled="scan.disabled">
                     <v-list-item-title>{{scan_name(scan)}}</v-list-item-title>
                     <v-list-item-subtitle>{{scan.protocol_name}}</v-list-item-subtitle>
                 </v-list-item>
