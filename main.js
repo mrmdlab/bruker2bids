@@ -33,9 +33,9 @@ const server = http.createServer(function (request, response) {
                 })
                 break
             case "/file":
-                let type="text/javascript"
-                if(query.type){
-                    type=query.type
+                let type = "text/javascript"
+                if (query.type) {
+                    type = query.type
                 }
                 fs.readFile(query.path, function (err, data) {
                     readFileCallback(response, data, type)
@@ -52,27 +52,29 @@ const server = http.createServer(function (request, response) {
                  * output_type
                  * reorientation_code
                  */
-                switch(query.task){
+                switch (query.task) {
                     case "start":
-                        delay=Number(query.delay)*1000
+                        delay = Number(query.delay) * 1000
                         auto_bids_begin = new Date().getTime()
                         // test
-                        // auto_bids_begin = 1696830659882 //2023-10-09T05:50:59.882Z
+                        // auto_bids_begin = new Date("2023-10-30T06:36:25.138Z").getTime()
 
-                        auto_bids_query=query
-                        auto_bids_record={}
-                        is_auto_bids_running=true
+                        auto_bids_query = query
+                        auto_bids_record = {}
+                        is_auto_bids_running = true
                         console.log("########Automated BIDS conversion begins########");
                         break
                     case "stop":
-                        is_auto_bids_running=false
+                        is_auto_bids_running = false
                         console.log("########Automated BIDS conversion ends########");
                         break
                     default:
-                        console.log("###Checking###");
-                        setTimeout(function(){
-                            check_scans()
-                        },delay)
+                        if (is_auto_bids_running) {
+                            console.log("###Checking###");
+                            setTimeout(function () {
+                                check_scans()
+                            }, delay)
+                        }
                 }
                 response.writeHead(200, { "Content-Type": "text/plain" });
                 response.end();

@@ -117,7 +117,7 @@ createApp({
         for (const folder in store.scans_all) {
           for (const scan of store.scans_all[folder]) {
             if (!scan.disabled) {
-              store.selected_scans.push(scan)
+              store.selected_scans.push(JSON.stringify(scan))
             }
           }
         }

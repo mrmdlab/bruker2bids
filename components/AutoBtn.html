@@ -21,7 +21,8 @@ curl http://localhost:{{store.port}}/auto_bids||echo
 3. The delay time is for DICOM conversion to finish
 4. Every time you click the "Check" button below or the server receives a request, it checks any new DICOM folder and converts it to BIDS according to the specified options and config
 5. Any modification to options and config after Automated BIDS conversion has begun takes no effect
-                    </pre>
+6. Please start automated BIDS conversion before creating a study. Otherwise, it may report "Found nothing to convert" by mistake. In that case, adding or duplicating a scan in ParaVision will fix it
+</pre>
 
                     <v-row class="d-flex align-center">
                         <!-- delay -->
