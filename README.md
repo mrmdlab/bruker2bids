@@ -6,6 +6,8 @@ git clone https://github.com/Microdeep-ZL/bruker2bids.git
 conda create -n bruker2bids -c conda-forge dcm2niix nodejs
 ```
 # dependecies
+- node.js and [dcm2niix](https://github.com/rordenlab/dcm2niix)
+	- can be installed via conda
 - pigz, tree, zip
 	- If you don't have sudo privilege to install them, try these two workarounds
 		- If you are using CentOS or Red Hat, [user-yum.sh](https://gitlab.com/caroff/user-yum.sh) is recommended
@@ -22,10 +24,8 @@ conda create -n bruker2bids -c conda-forge dcm2niix nodejs
 
 		alias pigz=gzip
 		```
-- node.js
-- singularity
-- FSL singularity container
-- [dcm2niix](https://github.com/rordenlab/dcm2niix)
+- singularity and FSL singularity container
+	- optional, can be ignored if you are not using the reorientation feature
 # Quick start
 ```sh
 # add this function to your ~/.bashrc
@@ -51,4 +51,6 @@ function bruker2bids(){
 - reorient images with one click
 - save, load and delete your own config files
 # Demo
-- The author is kind of too lazy to prepare a video. Just try it. If you have got any question, open an issue. I'm more than glab to help you! If you like it, please give this repository a star! If you see many stars, that means you can trust this program!
+https://mrmdlab.github.io/products/#bruker2bids
+# License
+Apache-2.0

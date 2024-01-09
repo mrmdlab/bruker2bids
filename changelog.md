@@ -3,6 +3,7 @@
 - SelectScan.vue to be async
 - adapt to different screen size
 - after deselecting a study folder, any relevant scans should also be removed
+- _dwi.py needs to extract bvecs from other tags in method file
 ## changelog
 - 0.2.0
     - automatic BISD conversion
